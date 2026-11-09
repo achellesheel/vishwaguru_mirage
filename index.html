@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>The Vishwaguru Mirage</title>
+<meta name="description" content="The world is tilting India's way. A choking capital, a restless talent drain and a ballot box ruled by caste arithmetic suggest the contest that matters is at home.">
+<meta name="author" content="ChaturOdysseus">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,700;1,6..72,400;1,6..72,500&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: broadsheet-style opinion page. Single reading column, sticky rail (contents, reading progress, key figures) on wide screens, source drawer on demand. */
+:root {
+  --bg: #fcfcfd;
+  --surface: #f2f4f7;
+  --ink: #14181f;
+  --muted: #566070;
+  --rule: #d6dbe2;
+  --accent: #0f5e63;
+  --accent-soft: #e2f1f1;
+  --ok: #17713f;
+  --ok-bg: #e3f4ea;
+  --warn: #8f5200;
+  --warn-bg: #fdf0d9;
+  --bad: #a8261d;
+  --bad-bg: #fbe5e3;
+  --neutral: #4a5565;
+  --neutral-bg: #e9ecf1;
+  --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-ui: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fs: 1.1875rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11151b; --surface: #1a2029; --ink: #e8ebf0; --muted: #9aa4b2; --rule: #2d3643;
+    --accent: #5cc2c8; --accent-soft: #15333a;
+    --ok: #6fd39b; --ok-bg: #153325; --warn: #f0b867; --warn-bg: #3a2a10;
+    --bad: #f19a93; --bad-bg: #3d1c19; --neutral: #b4bdca; --neutral-bg: #232b36;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11151b; --surface: #1a2029; --ink: #e8ebf0; --muted: #9aa4b2; --rule: #2d3643;
+  --accent: #5cc2c8; --accent-soft: #15333a;
+  --ok: #6fd39b; --ok-bg: #153325; --warn: #f0b867; --warn-bg: #3a2a10;
+  --bad: #f19a93; --bad-bg: #3d1c19; --neutral: #b4bdca; --neutral-bg: #232b36;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-serif);
+  padding-block: 0 4rem;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); text-underline-offset: 3px; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+
+#progress { position: fixed; top: 0; left: 0; height: 3px; width: 0; background: var(--accent); z-index: 30; }
+
+.wrap { max-width: 72rem; margin-inline: auto; }
+
+/* Utility bar */
+.util {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1rem;
+  padding-block: .75rem; border-bottom: 1px solid var(--rule);
+  font: 500 .78rem/1.2 var(--font-ui); color: var(--muted); letter-spacing: .02em;
+}
+.tools { display: flex; align-items: center; gap: .35rem; }
+.tools button {
+  min-width: 2.25rem; height: 2.25rem; padding: 0 .6rem; cursor: pointer;
+  background: transparent; border: 1px solid var(--rule); border-radius: 4px;
+  font: 600 .8rem var(--font-ui); color: var(--ink);
+}
+.tools button:hover { background: var(--surface); }
+.tools .lbl { margin-right: .25rem; }
+
+/* Masthead */
+.masthead { text-align: center; padding-block: 1.5rem 1rem; border-bottom: 3px double var(--ink); }
+.masthead .name { font: 700 clamp(1.9rem, 6vw, 3rem)/1 var(--font-serif); letter-spacing: .01em; margin: 0; }
+.masthead .sub { margin: .5rem 0 0; font: 600 .72rem var(--font-ui); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+.sectionbar { display: flex; gap: 1.25rem; padding-block: .65rem; border-bottom: 1px solid var(--rule); font: 600 .78rem var(--font-ui); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); overflow-x: auto; }
+.sectionbar span.on { color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: .2rem; }
+.sectionbar span { white-space: nowrap; }
+
+/* Page grid */
+.page { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem; padding-top: 2rem; }
+@media (min-width: 1000px) {
+  .page { grid-template-columns: 15rem minmax(0, 42rem) 15rem; justify-content: center; gap: 3rem; }
+}
+.rail { display: none; }
+@media (min-width: 1000px) {
+  .rail { display: block; position: sticky; top: 1.5rem; align-self: start; font-family: var(--font-ui); }
+}
+.rail h2 { font: 700 .72rem var(--font-ui); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 .75rem; }
+.toc { list-style: none; margin: 0; padding: 0; display: grid; gap: .1rem; border-left: 2px solid var(--rule); }
+.toc a { display: block; padding: .4rem .75rem; margin-left: -2px; border-left: 2px solid transparent; font-size: .85rem; line-height: 1.35; color: var(--muted); text-decoration: none; }
+.toc a:hover { color: var(--ink); }
+.toc a.on { color: var(--accent); border-left-color: var(--accent); font-weight: 600; }
+.readmeta { margin-top: 1.5rem; font-size: .8rem; color: var(--muted); }
+.rail.right .fig { display: grid; gap: .75rem; }
+
+/* Article header */
+.kicker { font: 700 .75rem var(--font-ui); letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin: 0 0 .9rem; }
+h1.headline { font: 700 clamp(2.1rem, 5.2vw, 3.3rem)/1.08 var(--font-serif); letter-spacing: -.01em; margin: 0; text-wrap: balance; }
+.standfirst { font: 400 1.35rem/1.45 var(--font-serif); color: var(--muted); margin: 1rem 0 1.5rem; text-wrap: pretty; }
+.byline { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; padding-block: .9rem; border-block: 1px solid var(--rule); font: 500 .85rem/1.3 var(--font-ui); color: var(--muted); }
+.byline strong { color: var(--ink); font-weight: 600; }
+.byline .dot::before { content: "·"; margin-right: 1rem; }
+
+/* Article body */
+article { min-width: 0; }
+.body { font-size: var(--fs); line-height: 1.72; }
+.body p { margin: 0 0 1.25em; text-wrap: pretty; }
+.body > p:first-of-type::first-letter { float: left; font: 700 4.1em/.82 var(--font-serif); padding: .06em .1em 0 0; color: var(--accent); }
+.body h2 { font: 700 1.65rem/1.2 var(--font-serif); margin: 2.4em 0 .7em; letter-spacing: -.005em; text-wrap: balance; scroll-margin-top: 1rem; }
+.body h3 { font: 700 .8rem var(--font-ui); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 2em 0 .6em; }
+.body ul, .body ol { margin: 0 0 1.4em; padding-left: 1.3em; }
+.body li { margin-bottom: .7em; padding-left: .3em; }
+.body li::marker { color: var(--accent); font-weight: 700; }
+.body strong { font-weight: 700; }
+
+blockquote.pull {
+  margin: 1.8em 0; padding: .2em 0 .2em 1.25rem; border-left: 4px solid var(--accent);
+  font: italic 500 1.5rem/1.4 var(--font-serif);
+}
+blockquote.pull cite { display: block; margin-top: .6rem; font: 600 .8rem var(--font-ui); font-style: normal; letter-spacing: .05em; color: var(--muted); }
+
+/* Fact-check reference markers */
+.ref {
+  display: inline-grid; place-items: center; vertical-align: super; line-height: 1;
+  min-width: 1.35rem; height: 1.35rem; margin-left: .15rem; padding: 0 .3rem;
+  font: 700 .66rem var(--font-ui); border-radius: 999px; cursor: pointer;
+  background: var(--accent-soft); color: var(--accent); border: 1px solid transparent;
+}
+.ref:hover { border-color: var(--accent); }
+.ref.corrected { background: var(--bad-bg); color: var(--bad); }
+.ref.check { background: var(--warn-bg); color: var(--warn); }
+
+/* Table */
+.tablewrap { overflow-x: auto; margin: 1.5em 0 2em; border: 1px solid var(--rule); border-radius: 6px; }
+table.contrast { width: 100%; border-collapse: collapse; font: 400 .98rem/1.5 var(--font-ui); min-width: 34rem; }
+table.contrast caption { text-align: left; padding: .8rem 1rem; font: 700 .72rem var(--font-ui); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); background: var(--surface); border-bottom: 1px solid var(--rule); }
+table.contrast th, table.contrast td { text-align: left; padding: .8rem 1rem; vertical-align: top; border-bottom: 1px solid var(--rule); }
+table.contrast tr:last-child td { border-bottom: 0; }
+table.contrast thead th { font: 700 .78rem var(--font-ui); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+table.contrast td:first-child { font-weight: 600; width: 34%; }
+
+/* Figure */
+figure.chart { margin: 2em 0; padding: 1.25rem; background: var(--surface); border-radius: 6px; font-family: var(--font-ui); }
+figure.chart h4 { margin: 0 0 .25rem; font: 700 1rem/1.3 var(--font-serif); }
+figure.chart .sub { margin: 0 0 1rem; font-size: .8rem; color: var(--muted); }
+.bars { display: grid; gap: .6rem; }
+.bar { display: grid; grid-template-columns: 3rem minmax(0, 1fr) 3rem; align-items: center; gap: .75rem; font-size: .85rem; font-variant-numeric: tabular-nums; }
+.bar .track { height: 1.35rem; background: var(--rule); border-radius: 2px; position: relative; }
+.bar .fill { position: absolute; inset: 0 auto 0 0; background: var(--muted); border-radius: 2px; width: 0; transition: width .7s ease; }
+.bar.last .fill { background: var(--accent); }
+.bar .val { font-weight: 700; text-align: right; }
+.bar.last .val { color: var(--accent); }
+figure.chart figcaption { margin-top: 1rem; font-size: .78rem; color: var(--muted); line-height: 1.5; }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font: inherit; }
+
+/* Key figure tiles */
+.tile { text-align: left; width: 100%; padding: .9rem 1rem; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; cursor: pointer; }
+.tile:hover { border-color: var(--accent); }
+.tile .n { display: block; font: 700 1.9rem/1 var(--font-serif); color: var(--accent); font-variant-numeric: tabular-nums; }
+.tile .t { display: block; margin-top: .4rem; font: 500 .8rem/1.35 var(--font-ui); color: var(--muted); }
+.tiles-inline { display: none; }
+@media (max-width: 999px) {
+  .tiles-inline { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: .75rem; margin: 0 0 2rem; }
+}
+
+/* Ledger */
+.ledger { margin-top: 3.5rem; padding-top: 2rem; border-top: 3px double var(--ink); font-family: var(--font-ui); }
+.ledger h2 { font: 700 1.65rem/1.2 var(--font-serif); margin: 0 0 .4rem; }
+.ledger .lede { margin: 0 0 1.25rem; font-size: .92rem; line-height: 1.55; color: var(--muted); max-width: 40rem; }
+.filters { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1rem; }
+.filters button { padding: .4rem .8rem; border: 1px solid var(--rule); border-radius: 999px; background: transparent; cursor: pointer; font: 600 .78rem var(--font-ui); }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.items { display: grid; gap: .6rem; }
+.item { border: 1px solid var(--rule); border-radius: 6px; background: var(--bg); }
+.item > button.head { width: 100%; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: .75rem; align-items: center; padding: .85rem 1rem; background: none; border: 0; text-align: left; cursor: pointer; }
+.item .idx { font: 700 .8rem var(--font-ui); color: var(--muted); font-variant-numeric: tabular-nums; width: 1.4rem; }
+.item .claim { font: 600 .95rem/1.4 var(--font-ui); }
+.item .chev { transition: transform .2s; color: var(--muted); }
+.item.open .chev { transform: rotate(180deg); }
+.item .detail { padding: 0 1rem 1rem 3.2rem; font-size: .9rem; line-height: 1.6; color: var(--ink); }
+.item .detail[hidden] { display: none; }
+.item .detail p { margin: 0 0 .7rem; }
+.srcs { display: flex; flex-wrap: wrap; gap: .4rem .9rem; padding: 0; margin: 0; list-style: none; font-size: .85rem; }
+.pill { display: inline-block; padding: .2rem .55rem; border-radius: 999px; font: 700 .68rem var(--font-ui); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+.pill.confirmed { background: var(--ok-bg); color: var(--ok); }
+.pill.corrected { background: var(--bad-bg); color: var(--bad); }
+.pill.check { background: var(--warn-bg); color: var(--warn); }
+
+/* Drawer */
+#drawer {
+  position: fixed; z-index: 40; background: var(--bg); color: var(--ink); font-family: var(--font-ui);
+  border: 1px solid var(--rule); box-shadow: 0 10px 40px rgba(0,0,0,.22);
+  left: max(8px, env(safe-area-inset-left, 0px)); right: max(8px, env(safe-area-inset-right, 0px));
+  bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+  max-height: 70vh; overflow-y: auto; padding: 1.1rem 1.25rem 1.25rem; border-radius: 10px;
+}
+@media (min-width: 700px) { #drawer { left: auto; right: max(20px, env(safe-area-inset-right, 0px)); width: 25rem; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); } }
+#drawer .top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: .6rem; }
+#drawer .x { width: 2rem; height: 2rem; border: 1px solid var(--rule); background: transparent; border-radius: 4px; cursor: pointer; font-size: 1.1rem; line-height: 1; }
+#drawer h3 { margin: 0 0 .6rem; font: 700 1.05rem/1.35 var(--font-serif); }
+#drawer p { margin: 0 0 .75rem; font-size: .9rem; line-height: 1.6; }
+
+footer.end { margin-top: 3rem; padding-top: 1.25rem; border-top: 1px solid var(--rule); font: 400 .82rem/1.6 var(--font-ui); color: var(--muted); }
+footer.end p { margin: 0 0 .5rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .bar .fill, .item .chev { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<div id="progress" aria-hidden="true"></div>
+
+<div class="wrap">
+  <div class="util">
+    <span>Monday, 9 November 2026</span>
+    <div class="tools" role="group" aria-label="Reading settings">
+      <span class="lbl">Text size</span>
+      <button id="fsDown" type="button" aria-label="Decrease text size">A&minus;</button>
+      <button id="fsUp" type="button" aria-label="Increase text size">A+</button>
+      <button id="themeBtn" type="button" aria-label="Switch colour theme">Theme</button>
+    </div>
+  </div>
+
+  <header class="masthead">
+    <p class="name">The Odyssey Review</p>
+    <p class="sub">Independent opinion &amp; commentary</p>
+  </header>
+  <nav class="sectionbar" aria-label="Sections">
+    <span>Editorial</span><span class="on">Opinion</span><span>Analysis</span><span>Letters</span>
+  </nav>
+
+  <div class="page">
+    <!-- Left rail: contents -->
+    <aside class="rail" aria-label="Article navigation">
+      <h2>In this article</h2>
+      <ol class="toc" id="toc" style="list-style:none"></ol>
+      <p class="readmeta"><span id="pct">0%</span> read &middot; 7 min</p>
+    </aside>
+
+    <article>
+      <p class="kicker">Opinion &middot; National affairs</p>
+      <h1 class="headline">The Vishwaguru Mirage: Why Geopolitics Won&rsquo;t Save Us From Ourselves</h1>
+      <p class="standfirst">The world is tilting India&rsquo;s way. A choking capital, a restless talent drain and a ballot box ruled by caste arithmetic suggest the contest that matters is at home.</p>
+      <div class="byline">
+        <span>By <strong>ChaturOdysseus</strong></span>
+        <span class="dot">Published 9 November 2026</span>
+        <span class="dot">7 min read</span>
+      </div>
+
+      <div class="tiles-inline" id="tilesInline"></div>
+
+      <div class="body" id="body">
+        <p>Every autumn, as the skies over North India turn into a leaden ceiling of toxic particulate matter, the national mood undergoes a peculiar cognitive dissonance. We light lamps, trade sweets, and celebrate the symbolic triumph of light over darkness while peering through hazardous smog on our way to pay inflated rents.</p>
+
+        <p>The global stage appears to be aligning in India&rsquo;s favour. Culturally, Nitesh Tiwari&rsquo;s massive cinematic adaptation of the Ramayana aims to project civilisational lore across international screens.<button class="ref" data-fc="1" type="button" aria-label="Source 1">1</button> Geopolitically, the Western narrative of isolating rivals has collided with economic realism. Despite persistent lecturing on moral diplomacy, Western powers have quietly adapted to realpolitik, buying refined petroleum products derived from Russian crude processed in Indian refineries. External Affairs Minister S. Jaishankar captured this Western ambivalence at the GLOBSEC Bratislava Forum in 2022:<button class="ref" data-fc="2" type="button" aria-label="Source 2">2</button></p>
+
+        <blockquote class="pull">
+          &ldquo;Europe has to grow out of the mindset that Europe&rsquo;s problems are the world&rsquo;s problems, but the world&rsquo;s problems are not Europe&rsquo;s problems.&rdquo;
+          <cite>S. Jaishankar, External Affairs Minister, GLOBSEC Bratislava Forum</cite>
+        </blockquote>
+
+        <p>Yet, while the tectonic plates of global influence creak in our direction, our internal civic fabric remains fraying, compromised by self-inflicted wounds, uncritical consumerism, and democratic negligence.</p>
+
+        <h2 id="s1">Silicon Valley&rsquo;s faltering halo</h2>
+        <p>For over two decades, the Indian middle class treated Silicon Valley as the ultimate high altar of civilisation. That pedestal is visibly cracking under its own weight.</p>
+
+        <ul>
+          <li><strong>Corporate vulnerability at the frontier.</strong> The myth of untouchable tech leadership has suffered an extraordinary blow. The New York Times reported that a woman accused of working for Chinese intelligence had sought close ties with Nvidia CEO Jensen Huang. He has since admitted an extramarital relationship with her, and Nvidia&rsquo;s board has opened an independent inquiry while members of Congress have asked him to testify. Beijing denies any spying.<button class="ref check" data-fc="3" type="button" aria-label="Source 3">3</button></li>
+          <li><strong>The cost of compute.</strong> The aggressive rollout of generative AI has created severe environmental strain. According to the Environmental and Energy Study Institute (EESI) and research from the University of California, Riverside, large data centres can consume up to 5 million gallons of water a day, much of it for evaporative cooling. That is comparable to the daily use of a town of 10,000 to 50,000 people.<button class="ref check" data-fc="4" type="button" aria-label="Source 4">4</button> As tech conglomerates corner freshwater and grid capacity to power computational hype, the trade-off between basic human survival resources and server racks is becoming an ethical flashpoint.</li>
+          <li><strong>The software dilemma.</strong> Tech executives themselves are sounding the alarm. Sridhar Vembu, co-founder of Zoho, has cautioned that the economic restructuring driven by generative tools is hitting white-collar stability, warning that any job performed on a computer now carries this risk and that adapting will be painful.<button class="ref check" data-fc="5" type="button" aria-label="Source 5">5</button></li>
+        </ul>
+
+        <p>Yet, faced with this looming disruption, the domestic tech ecosystem remains largely reactionary. Rather than pooling resources to build sovereign, foundational compute infrastructure and indigenous LLMs tailored to the subcontinent&rsquo;s linguistic diversity, millions scramble for superficial certifications to preserve IT-services desk jobs. We remain digital sharecroppers on foreign infrastructure.</p>
+
+        <h2 id="s2">The domestic contradiction: a nation on EMIs</h2>
+        <p>The starkest tragedy is not economic; it is behavioural. India remains caught in a loop of high-decibel cultural chauvinism paired with complete civic passivity.</p>
+
+        <div class="tablewrap">
+          <table class="contrast">
+            <caption>Aspiration versus ground reality</caption>
+            <thead><tr><th scope="col">The aspiration</th><th scope="col">The ground reality</th></tr></thead>
+            <tbody>
+              <tr><td>Global powerhouse and tech capital</td><td>Bengaluru and Gurugram grind to a halt during seasonal rainfall; drains choke.</td></tr>
+              <tr><td>Ancient civilisational pride</td><td>Brain drain: passport surrender queues remain packed with top engineering talent.</td></tr>
+              <tr><td>Economic mobility and growth</td><td>Household budgets consumed by EMIs for shoebox apartments in hazardous-AQI zones.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ul>
+          <li><strong>The health toll.</strong> Data from The Lancet Planetary Health link approximately 1.67 million premature deaths a year in India to air pollution.<button class="ref" data-fc="6" type="button" aria-label="Source 6">6</button> During festive months the Air Quality Index routinely breaches 400 to 500, which the Central Pollution Control Board classes as &lsquo;severe&rsquo;.<button class="ref check" data-fc="8" type="button" aria-label="Source 8">8</button> Yet air quality remains an afterthought in political manifestos, drowned out by film releases, social media controversies and sectarian mudslinging.</li>
+          <li><strong>The expatriate paradox.</strong> We take immense pride in our ancient heritage, yet the primary ambition of our educated youth remains migrating to North America or Western Europe, often to jurisdictions whose political establishments openly undermine Indian sovereignty. We demand respect on the global stage that our own emigrating workforce trades away for foreign residency status.</li>
+        </ul>
+
+        <h2 id="s3">Complicity at the ballot box</h2>
+        <p>The most uncomfortable truth lies within our democratic choices. It is easy to accuse politicians of corruption, violence and institutional decay; it is harder to admit that they hold office by democratic mandate.</p>
+        <p>According to the Association for Democratic Reforms (ADR), 46 per cent of the members elected to the 18th Lok Sabha, 251 of 543, declared criminal cases against themselves in their affidavits, with dozens facing serious charges including murder, kidnapping and crimes against women.<button class="ref corrected" data-fc="7" type="button" aria-label="Source 7">7</button></p>
+
+        <figure class="chart" aria-labelledby="chartTitle">
+          <h4 id="chartTitle">Winners with declared criminal cases</h4>
+          <p class="sub">Share of newly elected Lok Sabha members, by general election</p>
+          <div class="bars" id="bars"></div>
+          <figcaption>Source: ADR analyses of winners&rsquo; self-sworn affidavits. Declared cases are not convictions. <button class="linkbtn" data-fc="7" type="button">See fact-check note</button></figcaption>
+        </figure>
+
+        <p>We do not elect these candidates by accident:</p>
+        <ol>
+          <li><strong>Identity over integrity.</strong> Voters routinely prioritise caste affiliation, local patronage networks and freebies over a candidate&rsquo;s record on education, public healthcare and infrastructure.</li>
+          <li><strong>Indignation without ownership.</strong> After voting on narrow sectarian lines, the electorate spends the next five years lamenting systemic graft, poor law enforcement and bureaucratic apathy.</li>
+          <li><strong>The nature of protest.</strong> When citizens do take to the streets, collective action often deteriorates into vandalism, the destruction of public property and civic disorder, reflecting frustration rather than disciplined, policy-focused civic pressure.</li>
+        </ol>
+
+        <h2 id="s4">The real cleansing</h2>
+        <p>Geopolitical shifts are presenting India with an unprecedented historic opening. Western supply chains are diversifying away from Beijing, global energy routes are becoming multipolar, and international institutions can no longer ignore the Global South.</p>
+        <p>However, international leverage is useless if built on a hollow domestic foundation. A nation cannot project power abroad while its capital chokes on its own air, its youth hesitate to build foundational industries, and its voters trade the ballot for caste arithmetic.</p>
+        <p>If this festive season is to signify actual renewal rather than performative celebration, the inquiry must shift inward:</p>
+        <ul>
+          <li>Demand clean air, functional urban drainage and uncontaminated water with the same ferocity reserved for social media outrage.</li>
+          <li>Refuse to vote for tainted candidates regardless of their caste or party flags.</li>
+          <li>Move beyond being the back-office labour force for foreign tech platforms and build sovereign capabilities at home.</li>
+        </ul>
+        <p>Until we demand standards from ourselves and our leaders, playing the victim on the world stage will not prevent China or other strategic competitors from seizing the century. Real power begins not in foreign capitals or global film festivals, but on our own streets and in our own voting booths.</p>
+      </div>
+
+      <section class="ledger" id="ledger" aria-labelledby="ledgerTitle">
+        <h2 id="ledgerTitle">Fact-check ledger</h2>
+        <p class="lede">Claims in this piece that rest on a number, a quotation or a news report, checked against sources on 9 November 2026. Open an item for sources.</p>
+        <div class="filters" id="filters" role="group" aria-label="Filter by status"></div>
+        <div class="items" id="items"></div>
+      </section>
+
+      <footer class="end">
+        <p>The views expressed are the author&rsquo;s own. Where this page departs from the author&rsquo;s first draft on a matter of fact, the ledger above says so.</p>
+        <p>Figures and reports are as of 9 November 2026. Developing stories, including the Nvidia inquiry, may change.</p>
+      </footer>
+    </article>
+
+    <!-- Right rail: key figures -->
+    <aside class="rail right" aria-label="Key figures">
+      <h2>Key figures</h2>
+      <div class="fig" id="tilesRail"></div>
+    </aside>
+  </div>
+</div>
+
+<aside id="drawer" role="dialog" aria-modal="false" aria-labelledby="dTitle" hidden>
+  <div class="top"><span class="pill" id="dPill"></span><button class="x" id="dClose" type="button" aria-label="Close source panel">&times;</button></div>
+  <h3 id="dTitle"></h3>
+  <p id="dNote"></p>
+  <ul class="srcs" id="dSrcs"></ul>
+</aside>
+
+<script>
+(function () {
+  var STATUS = {
+    confirmed: 'Confirmed',
+    corrected: 'Corrected',
+    check: 'Check wording'
+  };
+
+  var FACTS = [
+    { id: 1, status: 'confirmed',
+      claim: 'Nitesh Tiwari’s Ramayana is an international release.',
+      note: 'Ramayana: Part 1 is a Nitesh Tiwari film with a November 2026 release. Its producer has said it opens internationally two days before India.',
+      links: [['Variety India: international release ahead of India','https://varietyindia.com/ramayana-to-release-internationally-two-days-before-india-producer-namit-malhotra-confirms/'],['Telangana Today: release date','https://telanganatoday.com/ramayana-part-1-release-date-confirmed-for-november-5-2026']] },
+    { id: 2, status: 'confirmed',
+      claim: 'Jaishankar: “Europe has to grow out of the mindset that Europe’s problems are the world’s problems…”',
+      note: 'The quotation is accurate. It was made at the GLOBSEC Bratislava Forum in June 2022, which the article now states. It has been widely recirculated since, including at the Munich Security Conference in 2023.',
+      links: [['The Wire: report of the remarks','https://thewire.in/government/europe-has-to-grow-out-of-mindset-that-its-problems-are-worlds-problems-jaishankar'],['The Tribune: report of the remarks','https://tribuneindia.com/news/europe-has-to-grow-out-of-mindset-that-its-problems-are-worlds-problems-jaishankar-400709']] },
+    { id: 3, status: 'check',
+      claim: 'Nvidia CEO Jensen Huang, an alleged Chinese spy and an independent board inquiry.',
+      note: 'Largely confirmed, with three changes from the first draft. The New York Times broke the story on 29 October; we could not find a Financial Times report in the coverage we read, so it is no longer named. Huang himself admitted the extramarital relationship in an email to staff. The claim that the woman worked for Chinese intelligence is an allegation, which Beijing denies, and the board says it has no reason to believe national security was compromised. The scrutiny is congressional rather than federal-agency: House Republicans asked Huang to testify on 18 November. The inquiry is still under way.',
+      links: [['Al Jazeera: Nvidia investigates CEO over affair (8 Nov)','https://www.aljazeera.com/news/2026/11/8/us-chipmaker-nvidia-investigates-ceo-jensen-huang-over-affair'],['CNBC: Nvidia investigation (8 Nov)','https://www.cnbc.com/2026/11/08/nvidia-jensen-huang-investigation-china-spy.html'],['CNBC: Huang asked to brief Congress (5 Nov)','https://www.cnbc.com/2026/11/05/nvidia-jensen-huang-china-spy-congress.html'],['CNBC: Nvidia responds to the original report (29 Oct)','https://www.cnbc.com/2026/10/29/nvidia-jensen-huang-chinese-intelligence-asset.html']] },
+    { id: 4, status: 'check',
+      claim: 'Large data centres can use up to 5 million gallons of water a day, like a town of 50,000.',
+      note: 'The figure is the upper end of what EESI cites for large facilities. EESI frames the comparison as a town of 10,000 to 50,000 people, so the article now gives that range. This is a ceiling, not a typical facility, and use varies widely with cooling design and climate. We did not open the University of California, Riverside paper, so check it directly before citing it for this number.',
+      links: [['EESI: Data centers and water consumption','https://www.eesi.org/articles/view/data-centers-and-water-consumption']] },
+    { id: 5, status: 'check',
+      claim: 'Sridhar Vembu: “Any job performed on a computer has this risk now… Adapting to this economic shift will be painful.”',
+      note: 'Vembu has repeatedly warned about AI and software jobs, and recent coverage (late October and early November 2026) matches the gist. We could not match the exact wording of the quotation, so the article now paraphrases it. His recent remarks also carry a counterpoint the piece leaves out: that cheaper software engineering means more businesses can afford it.',
+      links: [['The Hans India: AI risk is real, but more businesses can afford software engineers','https://www.thehansindia.com/tech/ai-risk-real-but-more-businesses-can-afford-software-engineers-now-sridhar-vembu-1137032'],['Telangana Today: AI risks jobs but could make tech talent affordable','https://telanganatoday.com/ai-risks-jobs-but-could-make-tech-talent-affordable-says-vembu']] },
+    { id: 6, status: 'confirmed',
+      claim: 'About 1.67 million premature deaths a year in India are linked to air pollution.',
+      note: 'The figure comes from the Global Burden of Disease analysis published in The Lancet Planetary Health in December 2020 and counts deaths in 2019. It is the most-cited estimate but is several years old.',
+      links: [['EurekAlert: Lancet Planetary Health release','https://www.eurekalert.org/news-releases/695925'],['DOAJ record: The Lancet Planetary Health','https://doaj.org/article/daf693fd3a3d444b9df48695cb72a342']] },
+    { id: 7, status: 'corrected',
+      claim: 'Nearly 44% of Lok Sabha members face active criminal cases.',
+      note: 'ADR’s analysis of the 2024 winners puts the figure at 46 per cent, or 251 of 543, so the article now says so. The 2019 figure was 43 per cent. These are cases declared in affidavits, not convictions, and “active” is not ADR’s wording: the term is “declared”.',
+      links: [['ThePrint: 46% of newly elected MPs face criminal cases','https://theprint.in/india/46-per-cent-of-newly-elected-mps-face-criminal-cases-adr/2119381'],['Onmanorama: 251 newly elected MPs','https://www.onmanorama.com/news/india/2024/06/06/huge-number-of-lok-sabha-mps-face-criminal-charges.html'],['ADR election watch (myneta.info)','https://myneta.info']] },
+    { id: 8, status: 'check',
+      claim: 'AQI routinely breaches 400 to 500, “hazardous” by CPCB.',
+      note: 'The CPCB bands put 401 to 500 in the “severe” category. “Hazardous” is the US EPA’s term, so the article now uses CPCB’s. Daily readings in North India do reach this band in the post-Diwali weeks, but check the live CPCB bulletin for the date you cite.',
+      links: [['CPCB: National Air Quality Index','https://airquality.cpcb.gov.in']] }
+  ];
+
+  var TILES = [
+    { n: '1.67 million', t: 'premature deaths linked to air pollution in India, 2019', fc: 6 },
+    { n: '46%', t: 'of 2024 Lok Sabha winners declared criminal cases', fc: 7 },
+    { n: 'Up to 5M gal', t: 'water a day at the largest data centres, per EESI', fc: 4 }
+  ];
+
+  var ADR = [['2009', 30], ['2014', 34], ['2019', 43], ['2024', 46]];
+
+  function byId(id) { return document.getElementById(id); }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function fact(id) { for (var i = 0; i < FACTS.length; i++) if (FACTS[i].id === id) return FACTS[i]; return null; }
+  function safe(fn) { try { return fn(); } catch (e) { return null; } }
+
+  /* Tiles */
+  function buildTiles(target) {
+    TILES.forEach(function (t) {
+      var b = el('button', 'tile'); b.type = 'button';
+      b.appendChild(el('span', 'n', t.n)); b.appendChild(el('span', 't', t.t));
+      b.addEventListener('click', function () { openDrawer(t.fc, b); });
+      target.appendChild(b);
+    });
+  }
+  buildTiles(byId('tilesRail')); buildTiles(byId('tilesInline'));
+
+  /* Chart */
+  var barsEl = byId('bars');
+  ADR.forEach(function (d, i) {
+    var row = el('div', 'bar' + (i === ADR.length - 1 ? ' last' : ''));
+    row.appendChild(el('span', null, d[0]));
+    var track = el('div', 'track'); var fill = el('div', 'fill'); fill.dataset.w = (d[1] / 50 * 100) + '%';
+    track.appendChild(fill); row.appendChild(track); row.appendChild(el('span', 'val', d[1] + '%'));
+    barsEl.appendChild(row);
+  });
+  requestAnimationFrame(function () { setTimeout(function () {
+    document.querySelectorAll('.bar .fill').forEach(function (f) { f.style.width = f.dataset.w; });
+  }, 60); });
+
+  /* Ledger */
+  var itemsEl = byId('items'), filtersEl = byId('filters'), current = 'all';
+  function renderLedger() {
+    itemsEl.textContent = '';
+    FACTS.forEach(function (f) {
+      if (current !== 'all' && f.status !== current) return;
+      var item = el('div', 'item'); item.id = 'fc-' + f.id;
+      var head = el('button', 'head'); head.type = 'button'; head.setAttribute('aria-expanded', 'false');
+      head.appendChild(el('span', 'idx', String(f.id)));
+      head.appendChild(el('span', 'claim', f.claim));
+      var right = el('span'); right.style.display = 'flex'; right.style.alignItems = 'center'; right.style.gap = '.6rem';
+      right.appendChild(el('span', 'pill ' + f.status, STATUS[f.status]));
+      right.appendChild(el('span', 'chev', '▾'));
+      head.appendChild(right);
+      var d = el('div', 'detail'); d.hidden = true;
+      d.appendChild(el('p', null, f.note));
+      fillLinks(d, f, 'srcs');
+      head.addEventListener('click', function () {
+        var open = item.classList.toggle('open'); d.hidden = !open; head.setAttribute('aria-expanded', String(open));
+      });
+      item.appendChild(head); item.appendChild(d); itemsEl.appendChild(item);
+    });
+  }
+  function fillLinks(parent, f, cls) {
+    var ul = el('ul', cls);
+    f.links.forEach(function (l) {
+      var li = el('li'); var a = el('a', null, l[0]); a.href = l[1]; a.target = '_blank'; a.rel = 'noopener noreferrer'; li.appendChild(a); ul.appendChild(li);
+    });
+    parent.appendChild(ul);
+  }
+  var FILTERS = [['all', 'All (' + FACTS.length + ')']].concat(Object.keys(STATUS).map(function (k) {
+    var n = FACTS.filter(function (f) { return f.status === k; }).length; return [k, STATUS[k] + ' (' + n + ')'];
+  }));
+  FILTERS.forEach(function (f) {
+    var b = el('button', null, f[1]); b.type = 'button'; b.setAttribute('aria-pressed', f[0] === 'all' ? 'true' : 'false');
+    b.addEventListener('click', function () {
+      current = f[0];
+      filtersEl.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
+      b.setAttribute('aria-pressed', 'true'); renderLedger();
+    });
+    filtersEl.appendChild(b);
+  });
+  renderLedger();
+
+  /* Drawer */
+  var drawer = byId('drawer'), lastFocus = null;
+  function openDrawer(id, from) {
+    var f = fact(id); if (!f) return;
+    lastFocus = from || null;
+    var pill = byId('dPill'); pill.className = 'pill ' + f.status; pill.textContent = STATUS[f.status] + ' · note ' + f.id;
+    byId('dTitle').textContent = f.claim; byId('dNote').textContent = f.note;
+    var s = byId('dSrcs'); s.textContent = ''; var tmp = el('div'); fillLinks(tmp, f, 'srcs');
+    while (tmp.firstChild.firstChild) s.appendChild(tmp.firstChild.firstChild);
+    drawer.hidden = false; byId('dClose').focus();
+  }
+  function closeDrawer() { drawer.hidden = true; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+  byId('dClose').addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !drawer.hidden) closeDrawer(); });
+  document.querySelectorAll('[data-fc]').forEach(function (b) {
+    b.addEventListener('click', function () { openDrawer(parseInt(b.getAttribute('data-fc'), 10), b); });
+  });
+  document.addEventListener('click', function (e) {
+    if (drawer.hidden) return;
+    if (!drawer.contains(e.target) && !e.target.closest('[data-fc]') && !e.target.closest('.tile')) closeDrawer();
+  });
+
+  /* Contents + progress */
+  var heads = Array.prototype.slice.call(document.querySelectorAll('.body h2'));
+  var toc = byId('toc');
+  heads.forEach(function (h) {
+    var li = el('li'); var a = el('a', null, h.textContent); a.href = '#' + h.id; li.appendChild(a); toc.appendChild(li);
+  });
+  var lg = el('li'); var la = el('a', null, 'Fact-check ledger'); la.href = '#ledger'; lg.appendChild(la); toc.appendChild(lg);
+  var links = Array.prototype.slice.call(toc.querySelectorAll('a'));
+  var targets = heads.concat([byId('ledger')]);
+  var bar = byId('progress'), pct = byId('pct'), bodyEl = byId('body');
+  function onScroll() {
+    var r = bodyEl.getBoundingClientRect();
+    var total = r.height - window.innerHeight * 0.6;
+    var done = Math.min(1, Math.max(0, (-r.top + window.innerHeight * 0.3) / Math.max(total, 1)));
+    bar.style.width = (done * 100) + '%'; pct.textContent = Math.round(done * 100) + '%';
+    var idx = -1;
+    targets.forEach(function (t, i) { if (t.getBoundingClientRect().top < window.innerHeight * 0.35) idx = i; });
+    links.forEach(function (a, i) { a.classList.toggle('on', i === idx); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true }); window.addEventListener('resize', onScroll); onScroll();
+
+  /* Text size */
+  var sizes = [1.0625, 1.1875, 1.3125, 1.4375], si = 1;
+  var saved = safe(function () { return localStorage.getItem('odyssey-fs'); });
+  if (saved !== null && !isNaN(parseInt(saved, 10))) si = Math.min(sizes.length - 1, Math.max(0, parseInt(saved, 10)));
+  function applySize() {
+    document.documentElement.style.setProperty('--fs', sizes[si] + 'rem');
+    safe(function () { localStorage.setItem('odyssey-fs', String(si)); });
+    byId('fsDown').disabled = si === 0; byId('fsUp').disabled = si === sizes.length - 1;
+    onScroll();
+  }
+  byId('fsDown').addEventListener('click', function () { if (si > 0) { si--; applySize(); } });
+  byId('fsUp').addEventListener('click', function () { if (si < sizes.length - 1) { si++; applySize(); } });
+  applySize();
+
+  /* Theme */
+  byId('themeBtn').addEventListener('click', function () {
+    var root = document.documentElement;
+    var dark = root.getAttribute('data-theme') === 'dark' ||
+      (!root.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    root.setAttribute('data-theme', dark ? 'light' : 'dark');
+  });
+})();
+</script>
+
+</body>
+</html>
